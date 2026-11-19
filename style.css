@@ -66,6 +66,30 @@ footer {
   text-align: center;
   padding: 30px;
 }
+footer {
+  text-align: center;
+  padding: 30px;
+}
+
+.add-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 12px;
+  background: var(--black);
+  color: var(--white);
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+.add-btn:hover {
+  background: var(--accent);
+  color: var(--black);
+}
+
+.cart {
+  font-weight: bold;
+}
+
 /* Tablets and small laptops */
 @media (max-width: 768px) {
   .products {
