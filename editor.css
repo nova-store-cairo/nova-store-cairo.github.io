@@ -1,0 +1,301 @@
+/* =====================================================
+   NOVA — edit mode (only visible to the logged-in owner)
+   ===================================================== */
+
+/* Texts you can click and type into */
+.is-editing [data-edit-key] {
+  border-radius: 8px;
+  outline: 1px dashed transparent;
+  outline-offset: 6px;
+  cursor: text;
+  transition: outline-color 0.2s, background 0.2s;
+}
+.is-editing [data-edit-key]:hover {
+  outline-color: var(--accent);
+}
+.is-editing [data-edit-key]:focus {
+  outline: 2px solid var(--accent);
+  background: rgba(0, 113, 227, 0.06);
+}
+.is-editing #hero-image {
+  cursor: context-menu;
+}
+
+/* Floating bar */
+.edit-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  z-index: 300;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100% - 24px);
+  padding: 8px 8px 8px 20px;
+  border-radius: var(--pill);
+  background: rgba(29, 29, 31, 0.86);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  color: #fff;
+  font-size: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+}
+.edit-bar-text {
+  display: flex;
+  min-width: 0;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.edit-bar-hint {
+  color: rgba(255, 255, 255, 0.64);
+}
+.edit-bar-btn {
+  flex: none;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--pill);
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+.edit-bar-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+.edit-bar-main {
+  background: var(--accent);
+}
+.edit-bar-main:hover {
+  background: var(--accent);
+  filter: brightness(1.1);
+}
+.edit-bar-link {
+  flex: none;
+  padding: 8px 12px 8px 4px;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+}
+.edit-bar-link:hover {
+  color: #fff;
+}
+/* When editing is switched off: only the "Edit store" button stays */
+.edit-bar.is-collapsed {
+  padding-left: 8px;
+}
+.edit-bar.is-collapsed .edit-bar-text,
+.edit-bar.is-collapsed #edit-add {
+  display: none;
+}
+
+/* Right-click menu */
+.edit-menu {
+  position: fixed;
+  z-index: 400;
+  min-width: 220px;
+  padding: 6px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+.edit-menu-title {
+  padding: 6px 12px 4px;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+}
+.edit-menu button {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+.edit-menu button:hover,
+.edit-menu button:focus-visible {
+  background: var(--accent);
+  color: #fff;
+  outline: none;
+}
+.edit-menu .is-danger {
+  color: #e30000;
+}
+
+/* Pencil on each tile + "Add product" tile */
+.card {
+  position: relative;
+}
+.edit-pencil {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  color: var(--text);
+  font-size: 17px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+.edit-pencil:hover {
+  background: var(--accent);
+  color: #fff;
+}
+.add-tile {
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 2px dashed var(--line);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-2);
+  font: inherit;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.add-tile span {
+  font-size: 40px;
+  font-weight: 300;
+  line-height: 1;
+}
+.add-tile:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Add / edit product dialog */
+.edit-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 350;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.36);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.edit-dialog-box {
+  width: 100%;
+  max-width: 520px;
+  max-height: 92vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  background: #fff;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
+}
+.edit-dialog-box h3 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.edit-dialog-box label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.edit-dialog-box input,
+.edit-dialog-box textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 17px;
+  font-weight: 400;
+}
+.edit-dialog-box input:focus,
+.edit-dialog-box textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+}
+.edit-dialog-box input[type="file"] {
+  font-size: 14px;
+}
+.edit-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.edit-error {
+  min-height: 18px;
+  color: #e30000;
+  font-size: 14px;
+}
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.edit-cancel {
+  padding: 12px 22px;
+  border: none;
+  border-radius: var(--pill);
+  background: var(--control);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+.edit-actions .btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+/* "Saved" message */
+.edit-toast {
+  position: fixed;
+  top: 64px;
+  left: 50%;
+  z-index: 500;
+  transform: translate(-50%, -12px);
+  padding: 10px 18px;
+  border-radius: var(--pill);
+  background: rgba(29, 29, 31, 0.9);
+  color: #fff;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+}
+.edit-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (max-width: 1000px) {
+  .edit-bar-hint {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .edit-row {
+    grid-template-columns: 1fr;
+  }
+}

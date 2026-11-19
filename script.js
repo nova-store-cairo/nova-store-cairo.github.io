@@ -12,6 +12,8 @@ function applyStoreSettings() {
     "© " + new Date().getFullYear() + " " + STORE.name;
   document.querySelector("#cart-currency").textContent = CUR;
   document.querySelector("#contact-link").href = "https://wa.me/" + STORE.whatsapp;
+  document.querySelector("#hero-contact").href = "https://wa.me/" + STORE.whatsapp;
+  if (STORE.heroImage) document.querySelector("#hero-image").src = STORE.heroImage;
   document.documentElement.style.setProperty("--accent", STORE.accentColor);
 }
 
@@ -20,6 +22,31 @@ const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // NEW: products now come from the database, so the list starts empty
 let products = [];
+
+// ===== NEW: texts the owner changed on the website itself =====
+// They are saved in the "site_settings" table and replace the defaults.
+let SITE = {};
+
+async function loadSiteSettings() {
+  const { data, error } = await db.from("site_settings").select("key, value");
+  if (error) {
+    console.error(error);
+    return;
+  }
+  data.forEach(function (row) {
+    SITE[row.key] = row.value;
+  });
+  applySiteSettings();
+}
+
+function applySiteSettings() {
+  // Every element marked data-edit-key="..." shows its saved text
+  document.querySelectorAll("[data-edit-key]").forEach(function (el) {
+    const value = SITE[el.dataset.editKey];
+    if (value) el.textContent = value;
+  });
+  if (SITE.hero_image) document.querySelector("#hero-image").src = SITE.hero_image;
+}
 
 // ===== 1. The cart: load it from storage (or start empty) =====
 let cart = [];
@@ -65,12 +92,12 @@ function renderProducts(category) {
   productsEl.innerHTML = list
     .map(function (product) {
       return `
-        <div class="card" data-id="${product.id}">
+        <div class="card" data-id="${product.id}" tabindex="0" role="button" aria-label="${product.name}, ${product.price.toLocaleString()} ${CUR}">
           <img src="${product.image}" alt="${product.name}" loading="lazy" decoding="async" width="400" height="500" />
           <h3>${product.name}</h3>
           <p class="desc">${product.description}</p>
           <p class="price">${product.price.toLocaleString()} ${CUR}</p>
-          <button class="add-btn">Choose size</button>
+          <button class="add-btn" tabindex="-1">Buy</button>
         </div>
       `;
     })
@@ -96,6 +123,7 @@ async function loadProducts() {
   products = data;
   renderFilters();
   renderProducts("all");
+  renderCart(); // now the bag can show product photos
 }
 
 // ===== 4. Category filter buttons (built from the products) =====
@@ -153,7 +181,7 @@ function openProduct(id) {
     .join("");
 
   sizeError.classList.remove("show");
-  modalAdd.textContent = "Add to cart";
+  modalAdd.textContent = "Add to Bag";
   modal.classList.add("open");
 }
 
@@ -165,6 +193,14 @@ function closeProduct() {
 productsEl.addEventListener("click", function (event) {
   const card = event.target.closest(".card");
   if (!card) return;
+  openProduct(Number(card.dataset.id));
+});
+
+// Keyboard: Enter or Space on a focused tile opens it too
+productsEl.addEventListener("keydown", function (event) {
+  const card = event.target.closest(".card");
+  if (!card || (event.key !== "Enter" && event.key !== " ")) return;
+  event.preventDefault();
   openProduct(Number(card.dataset.id));
 });
 
@@ -195,7 +231,7 @@ modalAdd.addEventListener("click", function () {
   });
   renderCart();
 
-  modalAdd.textContent = "Added ✓";
+  modalAdd.textContent = "Added to Bag";
   setTimeout(closeProduct, 700);
 });
 
@@ -223,20 +259,33 @@ function itemLabel(item) {
   return item.size ? item.name + " (" + item.size + ")" : item.name;
 }
 
+// The product's photo for the bag (found by id once products have loaded)
+function photoFor(item) {
+  const product = products.find(function (p) {
+    return p.id === item.id;
+  });
+  return product ? product.image : "";
+}
+
 function renderCart() {
   countEl.textContent = cart.length;
+  countEl.classList.toggle("is-empty", cart.length === 0); // hide the bubble at 0
   itemsEl.innerHTML = "";
 
   if (cart.length === 0) {
-    itemsEl.innerHTML = '<li class="empty">Your cart is empty</li>';
+    itemsEl.innerHTML = '<li class="empty">Your bag is empty. Pick something you like.</li>';
   }
 
   cart.forEach(function (item, index) {
     const li = document.createElement("li");
     li.innerHTML = `
-      <span>${itemLabel(item)}</span>
-      <span>${item.price.toLocaleString()} ${CUR}</span>
-      <button class="remove-btn" data-index="${index}">✕</button>
+      <img src="${photoFor(item)}" alt="" />
+      <div class="bag-info">
+        <strong>${item.name}</strong>
+        ${item.size ? `<span>Size ${item.size}</span>` : ""}
+        <button class="remove-btn" data-index="${index}">Remove</button>
+      </div>
+      <span class="bag-price">${item.price.toLocaleString()} ${CUR}</span>
     `;
     itemsEl.appendChild(li);
   });
@@ -269,7 +318,7 @@ form.addEventListener("submit", function (event) {
   event.preventDefault();
 
   if (cart.length === 0) {
-    alert("Your cart is empty. Add a product first!");
+    alert("Your bag is empty. Add a product first.");
     return;
   }
 
@@ -315,6 +364,7 @@ form.addEventListener("submit", function (event) {
 });
 
 // ===== 11. Start: draw everything when the page loads =====
-applyStoreSettings(); // NEW: the store's own name, texts and color
+applyStoreSettings(); // the store's own name, texts and color
+loadSiteSettings(); // NEW: texts the owner edited on the website
 loadProducts(); // fetch products from the database, then draw them
 renderCart();

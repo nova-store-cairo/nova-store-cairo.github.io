@@ -437,8 +437,8 @@ function dayKey(date) {
 function changeText(now, before) {
   if (before === 0) return now > 0 ? "new this week" : "";
   const percent = Math.round(((now - before) / before) * 100);
-  const sign = percent > 0 ? "▲ +" : percent < 0 ? "▼ " : "";
-  return sign + percent + "% vs previous 7 days";
+  const arrow = percent > 0 ? "▲ " : percent < 0 ? "▼ " : "";
+  return arrow + Math.abs(percent) + "% vs previous 7 days";
 }
 
 // Count how often each value appears: { "Black Hoodie": 12, ... }
@@ -565,8 +565,8 @@ async function loadSales() {
 function drawBarChart(canvasId, labels, values, unit, horizontal) {
   if (charts[canvasId]) charts[canvasId].destroy(); // remove the old chart first
 
-  const ink = "#111111";
-  const muted = "#6b6b6b";
+  const ink = "#1d1d1f";
+  const muted = "#6e6e73";
   const grid = "rgba(0, 0, 0, 0.08)";
 
   charts[canvasId] = new Chart(document.getElementById(canvasId), {
@@ -577,8 +577,8 @@ function drawBarChart(canvasId, labels, values, unit, horizontal) {
         {
           data: values,
           backgroundColor: ink,
-          hoverBackgroundColor: "#c8a46b",
-          borderRadius: 4,
+          hoverBackgroundColor: "#0071e3",
+          borderRadius: 6,
           borderSkipped: "start", // round only the end of each bar
           maxBarThickness: horizontal ? 22 : 28
         }

@@ -11,7 +11,7 @@
       content="NOVA Wear: streetwear made in Cairo. Hoodies, cargo pants, tees and jackets — order online and confirm on WhatsApp."
     />
     <link rel="canonical" href="https://samirtarek82005-tech.github.io/nova-store/" />
-    <meta name="theme-color" content="#111111" />
+    <meta name="theme-color" content="#ffffff" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 
     <!-- ===== Link preview on WhatsApp, Instagram, Facebook (Open Graph) ===== -->
@@ -33,8 +33,15 @@
     <link rel="preconnect" href="https://vbrfsyaacwrnlphxnhmh.supabase.co" />
     <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    />
 
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="editor.css" />
 
     <!-- ===== Tells Google what kind of business this is ===== -->
     <script type="application/ld+json">
@@ -51,33 +58,62 @@
   </head>
   <body>
     <header class="navbar">
-      <h1 class="logo" id="store-logo">NOVA</h1>
-      <nav>
-        <a href="#products">Shop</a>
-        <a href="#products">New In</a>
+      <a href="#" class="logo" id="store-logo">NOVA</a>
+      <nav aria-label="Main">
+        <a href="#shop">Shop</a>
+        <a href="#shop">New In</a>
         <a href="#" id="contact-link" target="_blank" rel="noopener">Contact</a>
-        <a href="#" class="cart" id="cart-open">Cart (<span id="cart-count">0</span>)</a>
+        <a href="#" class="cart" id="cart-open" aria-label="Open bag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path d="M5 8h14l-1 12H6L5 8Z" stroke-linejoin="round" />
+            <path d="M9 8V6.5a3 3 0 0 1 6 0V8" stroke-linecap="round" />
+          </svg>
+          <span id="cart-count" class="bag-count is-empty">0</span>
+        </a>
       </nav>
     </header>
 
     <main>
       <section class="hero">
-        <h2 id="hero-title">Streetwear made in Cairo</h2>
-        <p id="hero-text">New winter collection is here.</p>
-        <a href="#products" class="btn">Shop now</a>
+        <h1 id="hero-title" data-edit-key="hero_title">Built for Cairo nights.</h1>
+        <p id="hero-text" class="hero-sub" data-edit-key="hero_text">Heavyweight hoodies, relaxed cargos and everyday tees. Made in Cairo.</p>
+        <div class="hero-ctas">
+          <a href="#shop" class="btn" data-edit-key="hero_button">Shop the collection</a>
+          <a href="#" class="text-link" id="hero-contact" target="_blank" rel="noopener">Ask us on WhatsApp ›</a>
+        </div>
+        <img
+          id="hero-image"
+          class="hero-image"
+          src="https://images.unsplash.com/photo-1773236237682-5b5d5d771f06?w=2000&h=1125&fit=crop&auto=format&q=80"
+          alt="Three friends in hoodies and a denim jacket"
+          width="1024"
+          height="576"
+          fetchpriority="high"
+        />
       </section>
 
-      <!-- Category filters (built by JavaScript from the categories in the database) -->
-      <div class="filters" id="filters"></div>
+      <section class="shop" id="shop">
+        <div class="shop-head">
+          <h2 class="section-title" data-edit-key="section_title">The collection.</h2>
+          <p class="section-sub" data-edit-key="section_sub">Pick a piece, choose your size, order on WhatsApp.</p>
+          <!-- Category switch (built by JavaScript from the categories in the database) -->
+          <div class="filters" id="filters" role="group" aria-label="Categories"></div>
+        </div>
 
-      <!-- Empty on purpose: JavaScript builds the product cards here -->
-      <section id="products" class="products" aria-label="Products"></section>
+        <!-- Empty on purpose: JavaScript builds the product tiles here -->
+        <div id="products" class="products" aria-live="polite"></div>
+      </section>
     </main>
 
-    <footer id="store-footer">© 2026 NOVA Wear</footer>
+    <footer>
+      <div class="footer-inner">
+        <span data-edit-key="footer_note">Orders are confirmed with you on WhatsApp before delivery.</span>
+        <span id="store-footer">© 2026 NOVA Wear</span>
+      </div>
+    </footer>
 
-    <!-- Product details window (hidden until a card is clicked) -->
-    <div class="modal" id="product-modal">
+    <!-- Product sheet (hidden until a tile is clicked) -->
+    <div class="modal" id="product-modal" role="dialog" aria-modal="true" aria-labelledby="modal-name">
       <div class="modal-box">
         <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
         <img id="modal-image" src="" alt="" />
@@ -85,31 +121,33 @@
           <h2 id="modal-name"></h2>
           <p class="price" id="modal-price"></p>
           <p class="desc" id="modal-desc"></p>
-          <h4>Choose your size</h4>
+          <h4>Size. <span>Which one fits you?</span></h4>
           <div class="sizes" id="modal-sizes"></div>
-          <p class="size-error" id="size-error">Please choose a size first</p>
-          <button class="add-btn" id="modal-add">Add to cart</button>
+          <p class="size-error" id="size-error">Choose a size to add this to your bag.</p>
+          <button class="add-btn" id="modal-add">Add to Bag</button>
         </div>
       </div>
     </div>
 
-    <aside class="cart-panel" id="cart-panel">
+    <!-- Bag -->
+    <aside class="cart-panel" id="cart-panel" aria-label="Your bag">
       <div class="cart-header">
-        <h3>Your cart</h3>
-        <button id="cart-close" aria-label="Close cart">✕</button>
+        <h3>Review your bag.</h3>
+        <button id="cart-close" aria-label="Close bag">✕</button>
       </div>
       <ul id="cart-items"></ul>
       <p class="cart-total">
-        Total: <span id="cart-total">0</span> <span id="cart-currency">EGP</span>
+        <span>Total</span>
+        <strong><span id="cart-total">0</span> <span id="cart-currency">EGP</span></strong>
       </p>
 
-      <!-- Checkout form -->
       <form id="checkout-form" class="checkout">
-        <h4>Checkout</h4>
-        <input type="text" id="customer-name" placeholder="Your name" autocomplete="name" required />
+        <h4>Delivery details</h4>
+        <input type="text" id="customer-name" placeholder="Full name" autocomplete="name" required />
         <input type="tel" id="customer-phone" placeholder="Phone number" autocomplete="tel" required />
         <textarea id="customer-address" placeholder="Delivery address" autocomplete="street-address" required></textarea>
         <button type="submit" class="btn checkout-btn">Order on WhatsApp</button>
+        <p class="checkout-note">WhatsApp opens with your order ready to send.</p>
       </form>
     </aside>
 
@@ -117,5 +155,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="config.js"></script>
     <script defer src="script.js"></script>
+    <!-- Edit mode: does nothing unless the shop owner is logged in -->
+    <script defer src="editor.js"></script>
   </body>
 </html>
