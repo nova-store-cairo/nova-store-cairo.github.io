@@ -16,7 +16,7 @@ if (saved) {
 
 // ===== 2. Find the elements on the page =====
 const productsEl = document.querySelector("#products");
-const filterButtons = document.querySelectorAll(".filter-btn");
+const filtersEl = document.querySelector("#filters");
 const countEl = document.querySelector("#cart-count");
 const totalEl = document.querySelector("#cart-total");
 const itemsEl = document.querySelector("#cart-items");
@@ -80,18 +80,42 @@ async function loadProducts() {
   }
 
   products = data;
+  renderFilters();
   renderProducts("all");
 }
 
-// ===== 4. Category filter buttons =====
-filterButtons.forEach(function (button) {
-  button.addEventListener("click", function () {
-    filterButtons.forEach(function (b) {
-      b.classList.remove("active");
-    });
-    button.classList.add("active");
-    renderProducts(button.dataset.category);
+// ===== 4. Category filter buttons (built from the products) =====
+function renderFilters() {
+  // Collect each category once, e.g. ["hoodies", "pants", "tees"]
+  const categories = [];
+  products.forEach(function (product) {
+    if (!categories.includes(product.category)) {
+      categories.push(product.category);
+    }
   });
+
+  // "hoodies" → "Hoodies"
+  function niceName(text) {
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  }
+
+  filtersEl.innerHTML =
+    '<button class="filter-btn active" data-category="all">All</button>' +
+    categories
+      .map(function (c) {
+        return `<button class="filter-btn" data-category="${c}">${niceName(c)}</button>`;
+      })
+      .join("");
+}
+
+filtersEl.addEventListener("click", function (event) {
+  if (!event.target.classList.contains("filter-btn")) return;
+
+  filtersEl.querySelectorAll(".filter-btn").forEach(function (b) {
+    b.classList.remove("active");
+  });
+  event.target.classList.add("active");
+  renderProducts(event.target.dataset.category);
 });
 
 // ===== 5. NEW: open the product details window =====

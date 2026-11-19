@@ -30,17 +30,69 @@
 
     <!-- 2. DASHBOARD (shown after login) -->
     <section id="dashboard-view" class="dashboard" hidden>
-      <div class="stats">
-        <div class="stat"><span id="stat-orders">0</span><p>Orders</p></div>
-        <div class="stat"><span id="stat-new">0</span><p>New (to confirm)</p></div>
-        <div class="stat"><span id="stat-revenue">0</span><p>Revenue (EGP)</p></div>
+      <!-- NEW: tabs -->
+      <div class="admin-tabs">
+        <button class="tab-btn active" data-tab="orders">Orders</button>
+        <button class="tab-btn" data-tab="products">Products</button>
       </div>
 
-      <div class="dash-header">
-        <h2>Orders</h2>
-        <button id="refresh-btn" class="filter-btn">Refresh</button>
+      <!-- ORDERS TAB -->
+      <div id="tab-orders">
+        <div class="stats">
+          <div class="stat"><span id="stat-orders">0</span><p>Orders</p></div>
+          <div class="stat"><span id="stat-new">0</span><p>New (to confirm)</p></div>
+          <div class="stat"><span id="stat-revenue">0</span><p>Revenue (EGP)</p></div>
+        </div>
+
+        <div class="dash-header">
+          <h2>Orders</h2>
+          <button id="refresh-btn" class="filter-btn">Refresh</button>
+        </div>
+        <div id="orders-list" class="orders-list"></div>
       </div>
-      <div id="orders-list" class="orders-list"></div>
+
+      <!-- NEW: PRODUCTS TAB -->
+      <div id="tab-products" hidden>
+        <div class="dash-header">
+          <h2>Products</h2>
+          <button id="new-product-btn" class="filter-btn">+ Add product</button>
+        </div>
+
+        <!-- Add / edit form (hidden until needed) -->
+        <form id="product-form" class="product-form" hidden>
+          <h3 id="pf-title">Add product</h3>
+          <input type="hidden" id="pf-id" />
+
+          <label>Name
+            <input id="pf-name" required />
+          </label>
+          <label>Price (EGP)
+            <input id="pf-price" type="number" min="0" step="1" required />
+          </label>
+          <label>Category
+            <input id="pf-category" list="category-list" placeholder="e.g. hoodies" required />
+          </label>
+          <datalist id="category-list"></datalist>
+          <label>Sizes (separate with commas)
+            <input id="pf-sizes" placeholder="S, M, L, XL" required />
+          </label>
+          <label>Description
+            <textarea id="pf-description"></textarea>
+          </label>
+          <label>Photo
+            <input id="pf-image" type="file" accept="image/*" />
+          </label>
+          <img id="pf-preview" class="pf-preview" alt="Photo preview" hidden />
+
+          <div class="pf-actions">
+            <button type="submit" class="btn" id="pf-save">Save product</button>
+            <button type="button" class="filter-btn" id="pf-cancel">Cancel</button>
+          </div>
+          <p class="form-error" id="pf-error"></p>
+        </form>
+
+        <div id="products-admin-list" class="products-admin-list"></div>
+      </div>
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
