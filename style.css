@@ -348,3 +348,11 @@ footer {
     padding: 20px;
   }
 }
+
+/* ===== Loading message ===== */
+.loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #888;
+  padding: 40px 0;
+}

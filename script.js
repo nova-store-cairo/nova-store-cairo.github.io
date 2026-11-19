@@ -1,6 +1,12 @@
 // ===== 0. Settings =====
 const SHOP_PHONE = "201000000000"; // ← put the shop's WhatsApp number here
 
+// NEW: connect to the database (values come from config.js)
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// NEW: products now come from the database, so the list starts empty
+let products = [];
+
 // ===== 1. The cart: load it from storage (or start empty) =====
 let cart = [];
 const saved = localStorage.getItem("nova-cart");
@@ -55,6 +61,26 @@ function renderProducts(category) {
       `;
     })
     .join("");
+}
+
+// ===== NEW: load the products from the database =====
+async function loadProducts() {
+  productsEl.innerHTML = '<p class="loading">Loading products…</p>';
+
+  const { data, error } = await db
+    .from("products")
+    .select("*")
+    .order("id");
+
+  if (error) {
+    console.error(error);
+    productsEl.innerHTML =
+      '<p class="loading">Sorry, the products could not be loaded. Please refresh.</p>';
+    return;
+  }
+
+  products = data;
+  renderProducts("all");
 }
 
 // ===== 4. Category filter buttons =====
@@ -223,6 +249,24 @@ form.addEventListener("submit", function (event) {
   });
   message += "\nTotal: " + getTotal().toLocaleString() + " EGP";
 
+  // NEW: save the order in the database
+  db.from("orders")
+    .insert({
+      customer_name: name,
+      customer_phone: phone,
+      customer_address: address,
+      items: cart,
+      total: getTotal()
+    })
+    .then(function (result) {
+      if (result.error) {
+        console.error("Order was not saved:", result.error);
+      } else {
+        console.log("Order saved in the database ✓");
+      }
+    });
+
+  // Open WhatsApp right away (the order is saved in the background)
   const url = "https://wa.me/" + SHOP_PHONE + "?text=" + encodeURIComponent(message);
   window.open(url, "_blank");
 
@@ -233,5 +277,5 @@ form.addEventListener("submit", function (event) {
 });
 
 // ===== 11. Start: draw everything when the page loads =====
-renderProducts("all");
+loadProducts(); // NEW: fetch products from the database, then draw them
 renderCart();
