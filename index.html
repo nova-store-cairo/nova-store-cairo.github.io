@@ -13,7 +13,9 @@
         <a href="#">Shop</a>
         <a href="#">New In</a>
         <a href="#">Contact</a>
-        <a href="#" class="cart" id="cart-open">Cart (<span id="cart-count">0</span>)</a>
+        <a href="#" class="cart" id="cart-open"
+          >Cart (<span id="cart-count">0</span>)</a
+        >
       </nav>
     </header>
 
@@ -28,19 +30,25 @@
         <img src="https://placehold.co/400x500" alt="Black hoodie" />
         <h3>Black Hoodie</h3>
         <p class="price">1,200 EGP</p>
-        <button class="add-btn" data-name="Black Hoodie" data-price="1200">Add to cart</button>
+        <button class="add-btn" data-name="Black Hoodie" data-price="1200">
+          Add to cart
+        </button>
       </div>
       <div class="card">
         <img src="https://placehold.co/400x500" alt="Cargo pants" />
         <h3>Cargo Pants</h3>
         <p class="price">950 EGP</p>
-        <button class="add-btn" data-name="Cargo Pants" data-price="950">Add to cart</button>
+        <button class="add-btn" data-name="Cargo Pants" data-price="950">
+          Add to cart
+        </button>
       </div>
       <div class="card">
         <img src="https://placehold.co/400x500" alt="White tee" />
         <h3>White Tee</h3>
         <p class="price">450 EGP</p>
-        <button class="add-btn" data-name="White Tee" data-price="450">Add to cart</button>
+        <button class="add-btn" data-name="White Tee" data-price="450">
+          Add to cart
+        </button>
       </div>
     </section>
 
@@ -53,6 +61,31 @@
       </div>
       <ul id="cart-items"></ul>
       <p class="cart-total">Total: <span id="cart-total">0</span> EGP</p>
+
+      <!-- NEW: checkout form -->
+      <form id="checkout-form" class="checkout">
+        <h4>Checkout</h4>
+        <input
+          type="text"
+          id="customer-name"
+          placeholder="Your name"
+          required
+        />
+        <input
+          type="tel"
+          id="customer-phone"
+          placeholder="Phone number"
+          required
+        />
+        <textarea
+          id="customer-address"
+          placeholder="Delivery address"
+          required
+        ></textarea>
+        <button type="submit" class="btn checkout-btn">
+          Order on WhatsApp
+        </button>
+      </form>
     </aside>
 
     <script src="script.js"></script>

@@ -181,3 +181,36 @@ footer {
 .card:hover {
   transform: translateY(-8px);
 }
+/* ===== Checkout form ===== */
+#cart-items .empty {
+  color: #888;
+  border-bottom: none;
+}
+
+.checkout {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px solid var(--black);
+}
+
+.checkout input,
+.checkout textarea {
+  padding: 12px;
+  border: 1px solid #ccc;
+  font: inherit;
+}
+
+.checkout textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+.checkout-btn {
+  margin-top: 4px;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+}
