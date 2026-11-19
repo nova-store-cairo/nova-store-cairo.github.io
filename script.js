@@ -1,5 +1,19 @@
 // ===== 0. Settings =====
-const SHOP_PHONE = "201000000000"; // ← put the shop's WhatsApp number here
+// The store's name, WhatsApp number, currency and colors now live in config.js
+// (the STORE object), so a new client only needs that one file changed.
+const CUR = STORE.currency;
+
+// Put the store's own name, texts and color on the page
+function applyStoreSettings() {
+  document.querySelector("#store-logo").textContent = STORE.logo;
+  document.querySelector("#hero-title").textContent = STORE.heroTitle;
+  document.querySelector("#hero-text").textContent = STORE.heroText;
+  document.querySelector("#store-footer").textContent =
+    "© " + new Date().getFullYear() + " " + STORE.name;
+  document.querySelector("#cart-currency").textContent = CUR;
+  document.querySelector("#contact-link").href = "https://wa.me/" + STORE.whatsapp;
+  document.documentElement.style.setProperty("--accent", STORE.accentColor);
+}
 
 // NEW: connect to the database (values come from config.js)
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -52,10 +66,10 @@ function renderProducts(category) {
     .map(function (product) {
       return `
         <div class="card" data-id="${product.id}">
-          <img src="${product.image}" alt="${product.name}" />
+          <img src="${product.image}" alt="${product.name}" loading="lazy" decoding="async" width="400" height="500" />
           <h3>${product.name}</h3>
           <p class="desc">${product.description}</p>
-          <p class="price">${product.price.toLocaleString()} EGP</p>
+          <p class="price">${product.price.toLocaleString()} ${CUR}</p>
           <button class="add-btn">Choose size</button>
         </div>
       `;
@@ -128,7 +142,7 @@ function openProduct(id) {
   modalImage.src = currentProduct.image;
   modalImage.alt = currentProduct.name;
   modalName.textContent = currentProduct.name;
-  modalPrice.textContent = currentProduct.price.toLocaleString() + " EGP";
+  modalPrice.textContent = currentProduct.price.toLocaleString() + " " + CUR;
   modalDesc.textContent = currentProduct.description;
 
   // One button for each size of this product
@@ -221,7 +235,7 @@ function renderCart() {
     const li = document.createElement("li");
     li.innerHTML = `
       <span>${itemLabel(item)}</span>
-      <span>${item.price.toLocaleString()} EGP</span>
+      <span>${item.price.toLocaleString()} ${CUR}</span>
       <button class="remove-btn" data-index="${index}">✕</button>
     `;
     itemsEl.appendChild(li);
@@ -263,15 +277,15 @@ form.addEventListener("submit", function (event) {
   const phone = document.querySelector("#customer-phone").value;
   const address = document.querySelector("#customer-address").value;
 
-  let message = "New order from NOVA Wear 🛍️\n\n";
+  let message = "New order from " + STORE.name + " 🛍️\n\n";
   message += "Name: " + name + "\n";
   message += "Phone: " + phone + "\n";
   message += "Address: " + address + "\n\n";
   message += "Items:\n";
   cart.forEach(function (item) {
-    message += "- " + itemLabel(item) + " — " + item.price.toLocaleString() + " EGP\n";
+    message += "- " + itemLabel(item) + " — " + item.price.toLocaleString() + " " + CUR + "\n";
   });
-  message += "\nTotal: " + getTotal().toLocaleString() + " EGP";
+  message += "\nTotal: " + getTotal().toLocaleString() + " " + CUR;
 
   // NEW: save the order in the database
   db.from("orders")
@@ -291,7 +305,7 @@ form.addEventListener("submit", function (event) {
     });
 
   // Open WhatsApp right away (the order is saved in the background)
-  const url = "https://wa.me/" + SHOP_PHONE + "?text=" + encodeURIComponent(message);
+  const url = "https://wa.me/" + STORE.whatsapp + "?text=" + encodeURIComponent(message);
   window.open(url, "_blank");
 
   cart = [];
@@ -301,5 +315,6 @@ form.addEventListener("submit", function (event) {
 });
 
 // ===== 11. Start: draw everything when the page loads =====
-loadProducts(); // NEW: fetch products from the database, then draw them
+applyStoreSettings(); // NEW: the store's own name, texts and color
+loadProducts(); // fetch products from the database, then draw them
 renderCart();

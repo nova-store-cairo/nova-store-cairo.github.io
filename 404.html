@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Page not found</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        font-family: system-ui, sans-serif;
+        background: #fafafa;
+        color: #111;
+        text-align: center;
+        padding: 20px;
+      }
+      h1 { font-size: 72px; margin: 0; }
+      a {
+        margin-top: 12px;
+        padding: 14px 32px;
+        background: #c8a46b;
+        color: #111;
+        font-weight: bold;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>404</h1>
+    <p>Sorry, this page doesn't exist.</p>
+    <a id="home-link" href="/">Back to the shop</a>
+    <script>
+      // Works on both github.io/nova-store/ and a custom domain
+      if (location.pathname.startsWith("/nova-store")) {
+        document.getElementById("home-link").href = "/nova-store/";
+      }
+    </script>
+  </body>
+</html>

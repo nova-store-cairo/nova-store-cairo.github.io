@@ -3,42 +3,83 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NOVA Wear</title>
+
+    <!-- ===== Google & browser tab ===== -->
+    <title>NOVA Wear — Streetwear made in Cairo</title>
+    <meta
+      name="description"
+      content="NOVA Wear: streetwear made in Cairo. Hoodies, cargo pants, tees and jackets — order online and confirm on WhatsApp."
+    />
+    <link rel="canonical" href="https://samirtarek82005-tech.github.io/nova-store/" />
+    <meta name="theme-color" content="#111111" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+    <!-- ===== Link preview on WhatsApp, Instagram, Facebook (Open Graph) ===== -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="NOVA Wear" />
+    <meta property="og:title" content="NOVA Wear — Streetwear made in Cairo" />
+    <meta
+      property="og:description"
+      content="Hoodies, cargo pants, tees and jackets. Order online in a minute."
+    />
+    <meta
+      property="og:image"
+      content="https://images.unsplash.com/photo-1673092147872-5ddb03194341?w=1200&h=630&fit=crop&auto=format&q=80"
+    />
+    <meta property="og:url" content="https://samirtarek82005-tech.github.io/nova-store/" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- ===== Speed: start connecting to these servers early ===== -->
+    <link rel="preconnect" href="https://vbrfsyaacwrnlphxnhmh.supabase.co" />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+
     <link rel="stylesheet" href="style.css" />
+
+    <!-- ===== Tells Google what kind of business this is ===== -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ClothingStore",
+        "name": "NOVA Wear",
+        "description": "Streetwear made in Cairo.",
+        "url": "https://samirtarek82005-tech.github.io/nova-store/",
+        "address": { "@type": "PostalAddress", "addressLocality": "Cairo", "addressCountry": "EG" },
+        "currenciesAccepted": "EGP"
+      }
+    </script>
   </head>
   <body>
     <header class="navbar">
-      <h1 class="logo">NOVA</h1>
+      <h1 class="logo" id="store-logo">NOVA</h1>
       <nav>
-        <a href="#">Shop</a>
-        <a href="#">New In</a>
-        <a href="#">Contact</a>
-        <a href="#" class="cart" id="cart-open"
-          >Cart (<span id="cart-count">0</span>)</a
-        >
+        <a href="#products">Shop</a>
+        <a href="#products">New In</a>
+        <a href="#" id="contact-link" target="_blank" rel="noopener">Contact</a>
+        <a href="#" class="cart" id="cart-open">Cart (<span id="cart-count">0</span>)</a>
       </nav>
     </header>
 
-    <section class="hero">
-      <h2>Streetwear made in Cairo</h2>
-      <p>New winter collection is here.</p>
-      <a href="#products" class="btn">Shop now</a>
-    </section>
+    <main>
+      <section class="hero">
+        <h2 id="hero-title">Streetwear made in Cairo</h2>
+        <p id="hero-text">New winter collection is here.</p>
+        <a href="#products" class="btn">Shop now</a>
+      </section>
 
-    <!-- Category filters -->
-    <div class="filters" id="filters">
-      <!-- Built by JavaScript from the categories in the database -->
-    </div>
+      <!-- Category filters (built by JavaScript from the categories in the database) -->
+      <div class="filters" id="filters"></div>
 
-    <!-- Empty on purpose: JavaScript builds the product cards here -->
-    <section id="products" class="products"></section>
+      <!-- Empty on purpose: JavaScript builds the product cards here -->
+      <section id="products" class="products" aria-label="Products"></section>
+    </main>
 
-    <footer>© 2026 NOVA Wear</footer>
+    <footer id="store-footer">© 2026 NOVA Wear</footer>
 
-    <!-- NEW: product details window (hidden until a card is clicked) -->
+    <!-- Product details window (hidden until a card is clicked) -->
     <div class="modal" id="product-modal">
       <div class="modal-box">
-        <button class="modal-close" id="modal-close">✕</button>
+        <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
         <img id="modal-image" src="" alt="" />
         <div class="modal-info">
           <h2 id="modal-name"></h2>
@@ -55,41 +96,26 @@
     <aside class="cart-panel" id="cart-panel">
       <div class="cart-header">
         <h3>Your cart</h3>
-        <button id="cart-close">✕</button>
+        <button id="cart-close" aria-label="Close cart">✕</button>
       </div>
       <ul id="cart-items"></ul>
-      <p class="cart-total">Total: <span id="cart-total">0</span> EGP</p>
+      <p class="cart-total">
+        Total: <span id="cart-total">0</span> <span id="cart-currency">EGP</span>
+      </p>
 
-      <!-- NEW: checkout form -->
+      <!-- Checkout form -->
       <form id="checkout-form" class="checkout">
         <h4>Checkout</h4>
-        <input
-          type="text"
-          id="customer-name"
-          placeholder="Your name"
-          required
-        />
-        <input
-          type="tel"
-          id="customer-phone"
-          placeholder="Phone number"
-          required
-        />
-        <textarea
-          id="customer-address"
-          placeholder="Delivery address"
-          required
-        ></textarea>
-        <button type="submit" class="btn checkout-btn">
-          Order on WhatsApp
-        </button>
+        <input type="text" id="customer-name" placeholder="Your name" autocomplete="name" required />
+        <input type="tel" id="customer-phone" placeholder="Phone number" autocomplete="tel" required />
+        <textarea id="customer-address" placeholder="Delivery address" autocomplete="street-address" required></textarea>
+        <button type="submit" class="btn checkout-btn">Order on WhatsApp</button>
       </form>
     </aside>
 
-    <!-- Supabase library (lets JavaScript talk to the database) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Our connection details, then our code -->
-    <script src="config.js"></script>
-    <script src="script.js"></script>
+    <!-- "defer" = download now, run after the page is ready (faster first view) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="config.js"></script>
+    <script defer src="script.js"></script>
   </body>
 </html>

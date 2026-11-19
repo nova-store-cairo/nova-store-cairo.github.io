@@ -356,3 +356,19 @@ footer {
   color: #888;
   padding: 40px 0;
 }
+
+/* ===== Polish: images keep their shape while loading (no jumping) ===== */
+.card img {
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  height: auto;
+}
+
+/* ===== Keyboard users can see where they are ===== */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
