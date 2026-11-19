@@ -13,7 +13,7 @@
         <a href="#">Shop</a>
         <a href="#">New In</a>
         <a href="#">Contact</a>
-        <a href="#" class="cart">Cart (<span id="cart-count">0</span>)</a>
+        <a href="#" class="cart" id="cart-open">Cart (<span id="cart-count">0</span>)</a>
       </nav>
     </header>
 
@@ -28,26 +28,33 @@
         <img src="https://placehold.co/400x500" alt="Black hoodie" />
         <h3>Black Hoodie</h3>
         <p class="price">1,200 EGP</p>
-        <button class="add-btn">Add to cart</button>
+        <button class="add-btn" data-name="Black Hoodie" data-price="1200">Add to cart</button>
       </div>
       <div class="card">
         <img src="https://placehold.co/400x500" alt="Cargo pants" />
         <h3>Cargo Pants</h3>
         <p class="price">950 EGP</p>
-        <button class="add-btn">Add to cart</button>
+        <button class="add-btn" data-name="Cargo Pants" data-price="950">Add to cart</button>
       </div>
       <div class="card">
         <img src="https://placehold.co/400x500" alt="White tee" />
         <h3>White Tee</h3>
         <p class="price">450 EGP</p>
-        <button class="add-btn">Add to cart</button>
+        <button class="add-btn" data-name="White Tee" data-price="450">Add to cart</button>
       </div>
     </section>
 
     <footer>© 2026 NOVA Wear</footer>
 
+    <aside class="cart-panel" id="cart-panel">
+      <div class="cart-header">
+        <h3>Your cart</h3>
+        <button id="cart-close">✕</button>
+      </div>
+      <ul id="cart-items"></ul>
+      <p class="cart-total">Total: <span id="cart-total">0</span> EGP</p>
+    </aside>
+
     <script src="script.js"></script>
   </body>
 </html>
-<p class="price">1,200 EGP</p>
-<button class="add-btn">Add to cart</button>
