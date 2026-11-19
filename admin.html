@@ -34,6 +34,7 @@
       <div class="admin-tabs">
         <button class="tab-btn active" data-tab="orders">Orders</button>
         <button class="tab-btn" data-tab="products">Products</button>
+        <button class="tab-btn" data-tab="sales">Sales</button>
       </div>
 
       <!-- ORDERS TAB -->
@@ -93,8 +94,55 @@
 
         <div id="products-admin-list" class="products-admin-list"></div>
       </div>
+
+      <!-- NEW: SALES TAB -->
+      <div id="tab-sales" hidden>
+        <div class="dash-header">
+          <h2>Sales <span class="muted">(last 7 days, cancelled orders not counted)</span></h2>
+          <button id="sales-refresh-btn" class="filter-btn">Refresh</button>
+        </div>
+
+        <div class="stats stats-4">
+          <div class="stat">
+            <span id="kpi-revenue">0</span>
+            <p>Revenue (EGP)</p>
+            <small id="kpi-revenue-change" class="change"></small>
+          </div>
+          <div class="stat">
+            <span id="kpi-orders">0</span>
+            <p>Orders</p>
+            <small id="kpi-orders-change" class="change"></small>
+          </div>
+          <div class="stat">
+            <span id="kpi-average">0</span>
+            <p>Average order (EGP)</p>
+          </div>
+          <div class="stat">
+            <span id="kpi-best" class="kpi-text">—</span>
+            <p>Best seller</p>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h3>Revenue per day — last 14 days (EGP)</h3>
+          <div class="chart-box"><canvas id="chart-days" aria-label="Revenue per day for the last 14 days"></canvas></div>
+        </div>
+
+        <div class="chart-grid">
+          <div class="chart-card">
+            <h3>Best sellers — items sold (last 30 days)</h3>
+            <div class="chart-box"><canvas id="chart-products" aria-label="Items sold per product"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <h3>Popular sizes — items sold (last 30 days)</h3>
+            <div class="chart-box"><canvas id="chart-sizes" aria-label="Items sold per size"></canvas></div>
+          </div>
+        </div>
+      </div>
     </section>
 
+    <!-- NEW: Chart.js draws the charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="config.js"></script>
     <script src="admin.js"></script>

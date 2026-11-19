@@ -16,6 +16,7 @@ const ordersList = document.querySelector("#orders-list");
 const tabButtons = document.querySelectorAll(".tab-btn");
 const tabOrders = document.querySelector("#tab-orders");
 const tabProducts = document.querySelector("#tab-products");
+const tabSales = document.querySelector("#tab-sales");
 const productsAdminList = document.querySelector("#products-admin-list");
 const newProductBtn = document.querySelector("#new-product-btn");
 const productForm = document.querySelector("#product-form");
@@ -89,7 +90,9 @@ logoutBtn.addEventListener("click", async function () {
   showCorrectView();
 });
 
-// ===== 6. NEW: switch between the Orders and Products tabs =====
+// ===== 6. Switch between the tabs =====
+const tabs = { orders: tabOrders, products: tabProducts, sales: tabSales };
+
 tabButtons.forEach(function (button) {
   button.addEventListener("click", function () {
     tabButtons.forEach(function (b) {
@@ -97,15 +100,15 @@ tabButtons.forEach(function (button) {
     });
     button.classList.add("active");
 
-    const showProducts = button.dataset.tab === "products";
-    tabOrders.hidden = showProducts;
-    tabProducts.hidden = !showProducts;
+    // Show the chosen tab, hide the others
+    const chosen = button.dataset.tab;
+    Object.keys(tabs).forEach(function (name) {
+      tabs[name].hidden = name !== chosen;
+    });
 
-    if (showProducts) {
-      loadAdminProducts();
-    } else {
-      loadOrders();
-    }
+    if (chosen === "orders") loadOrders();
+    if (chosen === "products") loadAdminProducts();
+    if (chosen === "sales") loadSales();
   });
 });
 
@@ -418,5 +421,203 @@ productsAdminList.addEventListener("click", async function (event) {
   }
 });
 
-// ===== 16. Start =====
+// =====================================================
+// NEW: SALES DASHBOARD
+// =====================================================
+
+const charts = {}; // the drawn charts, so we can redraw them on Refresh
+const DAY = 24 * 60 * 60 * 1000; // one day in milliseconds
+
+// "2026-11-19" for a date (in the computer's own time zone)
+function dayKey(date) {
+  return date.toLocaleDateString("en-CA");
+}
+
+// "+12% vs previous 7 days" — or nothing if there is nothing to compare
+function changeText(now, before) {
+  if (before === 0) return now > 0 ? "new this week" : "";
+  const percent = Math.round(((now - before) / before) * 100);
+  const sign = percent > 0 ? "▲ +" : percent < 0 ? "▼ " : "";
+  return sign + percent + "% vs previous 7 days";
+}
+
+// Count how often each value appears: { "Black Hoodie": 12, ... }
+function countBy(list, getKey) {
+  const counts = {};
+  list.forEach(function (item) {
+    const key = getKey(item);
+    if (key === undefined || key === null) return;
+    counts[key] = (counts[key] || 0) + 1;
+  });
+  return counts;
+}
+
+// ===== 16. Load the orders and calculate the numbers =====
+async function loadSales() {
+  const { data, error } = await db.from("orders").select("*");
+  if (error) {
+    console.error(error);
+    alert("Could not load sales data.");
+    return;
+  }
+
+  const now = Date.now();
+  const orders = data.filter(function (o) {
+    return o.status !== "cancelled";
+  });
+
+  // Orders from the last 7 days, and the 7 days before that
+  const thisWeek = orders.filter(function (o) {
+    return now - new Date(o.created_at) < 7 * DAY;
+  });
+  const lastWeek = orders.filter(function (o) {
+    const age = now - new Date(o.created_at);
+    return age >= 7 * DAY && age < 14 * DAY;
+  });
+
+  const sum = function (list) {
+    return list.reduce(function (total, o) {
+      return total + o.total;
+    }, 0);
+  };
+  const revenueNow = sum(thisWeek);
+  const revenueBefore = sum(lastWeek);
+
+  // Every single item sold in the last 30 days (one order can have several)
+  const items = [];
+  orders.forEach(function (o) {
+    if (now - new Date(o.created_at) < 30 * DAY) {
+      o.items.forEach(function (item) {
+        items.push(item);
+      });
+    }
+  });
+  const byProduct = countBy(items, function (i) {
+    return i.name;
+  });
+  const bySize = countBy(items, function (i) {
+    return i.size;
+  });
+
+  // Sort products from most to least sold
+  const productRanking = Object.entries(byProduct).sort(function (a, b) {
+    return b[1] - a[1];
+  });
+
+  // ----- the 4 numbers -----
+  document.querySelector("#kpi-revenue").textContent = revenueNow.toLocaleString();
+  document.querySelector("#kpi-revenue-change").textContent = changeText(revenueNow, revenueBefore);
+  document.querySelector("#kpi-orders").textContent = thisWeek.length;
+  document.querySelector("#kpi-orders-change").textContent = changeText(thisWeek.length, lastWeek.length);
+  document.querySelector("#kpi-average").textContent = thisWeek.length
+    ? Math.round(revenueNow / thisWeek.length).toLocaleString()
+    : "0";
+  document.querySelector("#kpi-best").textContent = productRanking.length
+    ? productRanking[0][0]
+    : "—";
+
+  // ----- revenue per day, last 14 days (days with no sales show 0) -----
+  const dayLabels = [];
+  const dayValues = [];
+  for (let i = 13; i >= 0; i--) {
+    const date = new Date(now - i * DAY);
+    const key = dayKey(date);
+    const revenue = orders
+      .filter(function (o) {
+        return dayKey(new Date(o.created_at)) === key;
+      })
+      .reduce(function (total, o) {
+        return total + o.total;
+      }, 0);
+    dayLabels.push(date.toLocaleDateString("en-GB", { day: "numeric", month: "short" }));
+    dayValues.push(revenue);
+  }
+
+  // ----- sizes in a sensible order (S, M, L... then 30, 32...) -----
+  const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL"];
+  const sizeLabels = Object.keys(bySize).sort(function (a, b) {
+    const ia = sizeOrder.indexOf(a);
+    const ib = sizeOrder.indexOf(b);
+    if (ia !== -1 && ib !== -1) return ia - ib;
+    if (ia !== -1) return -1;
+    if (ib !== -1) return 1;
+    return Number(a) - Number(b);
+  });
+
+  drawBarChart("chart-days", dayLabels, dayValues, "EGP", false);
+  drawBarChart(
+    "chart-products",
+    productRanking.map(function (p) { return p[0]; }),
+    productRanking.map(function (p) { return p[1]; }),
+    "items",
+    true
+  );
+  drawBarChart(
+    "chart-sizes",
+    sizeLabels,
+    sizeLabels.map(function (s) { return bySize[s]; }),
+    "items",
+    false
+  );
+}
+
+// ===== 17. One function draws all three bar charts =====
+function drawBarChart(canvasId, labels, values, unit, horizontal) {
+  if (charts[canvasId]) charts[canvasId].destroy(); // remove the old chart first
+
+  const ink = "#111111";
+  const muted = "#6b6b6b";
+  const grid = "rgba(0, 0, 0, 0.08)";
+
+  charts[canvasId] = new Chart(document.getElementById(canvasId), {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          data: values,
+          backgroundColor: ink,
+          hoverBackgroundColor: "#c8a46b",
+          borderRadius: 4,
+          borderSkipped: "start", // round only the end of each bar
+          maxBarThickness: horizontal ? 22 : 28
+        }
+      ]
+    },
+    options: {
+      indexAxis: horizontal ? "y" : "x",
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }, // one series: the title already names it
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              const value = horizontal ? context.parsed.x : context.parsed.y;
+              return " " + value.toLocaleString() + " " + unit;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: horizontal, color: grid },
+          ticks: { color: muted, precision: 0 },
+          border: { display: false },
+          beginAtZero: true
+        },
+        y: {
+          grid: { display: !horizontal, color: grid },
+          ticks: { color: horizontal ? ink : muted, precision: 0 },
+          border: { display: false },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+document.querySelector("#sales-refresh-btn").addEventListener("click", loadSales);
+
+// ===== 18. Start =====
 showCorrectView();
