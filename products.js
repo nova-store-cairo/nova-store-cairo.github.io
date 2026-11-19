@@ -3,6 +3,7 @@
 // To add a product, copy one { ... } block, paste it
 // before the closing ], and change its details.
 // Every product needs a unique id.
+// sizes: the sizes the customer can choose from.
 // =====================================================
 const products = [
   {
@@ -10,6 +11,7 @@ const products = [
     name: "Black Hoodie",
     price: 1200,
     category: "hoodies",
+    sizes: ["S", "M", "L", "XL"],
     image: "https://placehold.co/400x500?text=Black+Hoodie",
     description: "Heavyweight cotton hoodie with an oversized fit."
   },
@@ -18,6 +20,7 @@ const products = [
     name: "Grey Hoodie",
     price: 1150,
     category: "hoodies",
+    sizes: ["S", "M", "L", "XL"],
     image: "https://placehold.co/400x500?text=Grey+Hoodie",
     description: "Soft fleece hoodie, perfect for Cairo winter nights."
   },
@@ -26,6 +29,7 @@ const products = [
     name: "Cargo Pants",
     price: 950,
     category: "pants",
+    sizes: ["30", "32", "34", "36"],
     image: "https://placehold.co/400x500?text=Cargo+Pants",
     description: "Relaxed cargo pants with six pockets."
   },
@@ -34,6 +38,7 @@ const products = [
     name: "Wide-leg Jeans",
     price: 1100,
     category: "pants",
+    sizes: ["30", "32", "34", "36"],
     image: "https://placehold.co/400x500?text=Wide-leg+Jeans",
     description: "Washed denim with a loose, wide-leg cut."
   },
@@ -42,6 +47,7 @@ const products = [
     name: "White Tee",
     price: 450,
     category: "tees",
+    sizes: ["S", "M", "L", "XL"],
     image: "https://placehold.co/400x500?text=White+Tee",
     description: "Everyday 100% cotton tee."
   },
@@ -50,6 +56,7 @@ const products = [
     name: "Black Tee",
     price: 450,
     category: "tees",
+    sizes: ["S", "M", "L", "XL"],
     image: "https://placehold.co/400x500?text=Black+Tee",
     description: "Everyday 100% cotton tee in black."
   },
@@ -58,6 +65,7 @@ const products = [
     name: "Denim Jacket",
     price: 1500,
     category: "jackets",
+    sizes: ["S", "M", "L", "XL"],
     image: "https://placehold.co/400x500?text=Denim+Jacket",
     description: "Classic washed denim jacket."
   }

@@ -39,6 +39,23 @@
 
     <footer>© 2026 NOVA Wear</footer>
 
+    <!-- NEW: product details window (hidden until a card is clicked) -->
+    <div class="modal" id="product-modal">
+      <div class="modal-box">
+        <button class="modal-close" id="modal-close">✕</button>
+        <img id="modal-image" src="" alt="" />
+        <div class="modal-info">
+          <h2 id="modal-name"></h2>
+          <p class="price" id="modal-price"></p>
+          <p class="desc" id="modal-desc"></p>
+          <h4>Choose your size</h4>
+          <div class="sizes" id="modal-sizes"></div>
+          <p class="size-error" id="size-error">Please choose a size first</p>
+          <button class="add-btn" id="modal-add">Add to cart</button>
+        </div>
+      </div>
+    </div>
+
     <aside class="cart-panel" id="cart-panel">
       <div class="cart-header">
         <h3>Your cart</h3>
