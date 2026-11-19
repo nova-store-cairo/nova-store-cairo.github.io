@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>NOVA Admin</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <h1 class="logo">NOVA <span class="admin-tag">Admin</span></h1>
+      <nav>
+        <a href="index.html">View store</a>
+        <button id="logout-btn" class="link-btn" hidden>Log out</button>
+      </nav>
+    </header>
+
+    <!-- 1. LOGIN (shown when nobody is logged in) -->
+    <section id="login-view" class="login-view">
+      <form id="login-form" class="login-box">
+        <h2>Owner login</h2>
+        <input type="email" id="login-email" placeholder="Email" autocomplete="username" required />
+        <input type="password" id="login-password" placeholder="Password" autocomplete="current-password" required />
+        <button type="submit" class="btn">Log in</button>
+        <p class="form-error" id="login-error"></p>
+      </form>
+    </section>
+
+    <!-- 2. DASHBOARD (shown after login) -->
+    <section id="dashboard-view" class="dashboard" hidden>
+      <div class="stats">
+        <div class="stat"><span id="stat-orders">0</span><p>Orders</p></div>
+        <div class="stat"><span id="stat-new">0</span><p>New (to confirm)</p></div>
+        <div class="stat"><span id="stat-revenue">0</span><p>Revenue (EGP)</p></div>
+      </div>
+
+      <div class="dash-header">
+        <h2>Orders</h2>
+        <button id="refresh-btn" class="filter-btn">Refresh</button>
+      </div>
+      <div id="orders-list" class="orders-list"></div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>

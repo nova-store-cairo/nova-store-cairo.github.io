@@ -1,0 +1,130 @@
+/* ===== NOVA Admin styles (uses the colors from style.css) ===== */
+[hidden] {
+  display: none !important;
+}
+
+.admin-tag {
+  font-size: 14px;
+  background: var(--accent);
+  padding: 2px 8px;
+  vertical-align: middle;
+}
+
+.link-btn {
+  margin-left: 24px;
+  background: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* ----- Login ----- */
+.login-view {
+  display: flex;
+  justify-content: center;
+  padding: 80px 20px;
+}
+.login-box {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.login-box input {
+  padding: 12px;
+  border: 1px solid #ccc;
+  font: inherit;
+}
+.login-box .btn {
+  border: none;
+  cursor: pointer;
+}
+.form-error {
+  color: #c62828;
+  min-height: 20px;
+}
+
+/* ----- Dashboard ----- */
+.dashboard {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.stat {
+  background: var(--black);
+  color: var(--white);
+  padding: 20px;
+}
+.stat span {
+  font-size: 32px;
+  font-weight: bold;
+}
+.stat p {
+  color: #bbb;
+}
+
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+/* ----- Order cards ----- */
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.order-card {
+  border: 1px solid #ddd;
+  border-left: 6px solid #999;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.order-card.status-new { border-left-color: var(--accent); }
+.order-card.status-confirmed { border-left-color: #1e88e5; }
+.order-card.status-delivered { border-left-color: #43a047; }
+.order-card.status-cancelled { border-left-color: #c62828; opacity: 0.6; }
+
+.order-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.order-date {
+  color: #777;
+  font-size: 14px;
+  flex: 1;
+}
+.status-select {
+  padding: 6px 10px;
+  font: inherit;
+}
+.order-address {
+  color: #555;
+}
+.order-items {
+  padding-left: 20px;
+}
+.order-total {
+  font-weight: bold;
+}
+
+@media (max-width: 600px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+}
