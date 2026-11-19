@@ -25,32 +25,17 @@
       <a href="#products" class="btn">Shop now</a>
     </section>
 
-    <section id="products" class="products">
-      <div class="card">
-        <img src="https://placehold.co/400x500" alt="Black hoodie" />
-        <h3>Black Hoodie</h3>
-        <p class="price">1,200 EGP</p>
-        <button class="add-btn" data-name="Black Hoodie" data-price="1200">
-          Add to cart
-        </button>
-      </div>
-      <div class="card">
-        <img src="https://placehold.co/400x500" alt="Cargo pants" />
-        <h3>Cargo Pants</h3>
-        <p class="price">950 EGP</p>
-        <button class="add-btn" data-name="Cargo Pants" data-price="950">
-          Add to cart
-        </button>
-      </div>
-      <div class="card">
-        <img src="https://placehold.co/400x500" alt="White tee" />
-        <h3>White Tee</h3>
-        <p class="price">450 EGP</p>
-        <button class="add-btn" data-name="White Tee" data-price="450">
-          Add to cart
-        </button>
-      </div>
-    </section>
+    <!-- Category filters -->
+    <div class="filters">
+      <button class="filter-btn active" data-category="all">All</button>
+      <button class="filter-btn" data-category="hoodies">Hoodies</button>
+      <button class="filter-btn" data-category="pants">Pants</button>
+      <button class="filter-btn" data-category="tees">Tees</button>
+      <button class="filter-btn" data-category="jackets">Jackets</button>
+    </div>
+
+    <!-- Empty on purpose: JavaScript builds the product cards here -->
+    <section id="products" class="products"></section>
 
     <footer>© 2026 NOVA Wear</footer>
 
@@ -88,6 +73,7 @@
       </form>
     </aside>
 
+    <script src="products.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

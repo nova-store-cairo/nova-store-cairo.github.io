@@ -9,16 +9,54 @@ if (saved) {
 }
 
 // ===== 2. Find the elements on the page =====
+const productsEl = document.querySelector("#products");
+const filterButtons = document.querySelectorAll(".filter-btn");
 const countEl = document.querySelector("#cart-count");
 const totalEl = document.querySelector("#cart-total");
 const itemsEl = document.querySelector("#cart-items");
 const panel = document.querySelector("#cart-panel");
 const openBtn = document.querySelector("#cart-open");
 const closeBtn = document.querySelector("#cart-close");
-const buttons = document.querySelectorAll(".add-btn");
 const form = document.querySelector("#checkout-form");
 
-// ===== 3. Add up the prices =====
+// ===== 3. NEW: build the product cards from the products list =====
+function renderProducts(category) {
+  // Keep only the products of the chosen category
+  let list = products;
+  if (category !== "all") {
+    list = products.filter(function (product) {
+      return product.category === category;
+    });
+  }
+
+  // Turn each product into a card (HTML text), then join them together
+  productsEl.innerHTML = list
+    .map(function (product) {
+      return `
+        <div class="card">
+          <img src="${product.image}" alt="${product.name}" />
+          <h3>${product.name}</h3>
+          <p class="desc">${product.description}</p>
+          <p class="price">${product.price.toLocaleString()} EGP</p>
+          <button class="add-btn" data-id="${product.id}">Add to cart</button>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+// ===== 4. NEW: category filter buttons =====
+filterButtons.forEach(function (button) {
+  button.addEventListener("click", function () {
+    filterButtons.forEach(function (b) {
+      b.classList.remove("active");
+    });
+    button.classList.add("active");
+    renderProducts(button.dataset.category);
+  });
+});
+
+// ===== 5. Add up the prices =====
 function getTotal() {
   let total = 0;
   cart.forEach(function (item) {
@@ -27,7 +65,7 @@ function getTotal() {
   return total;
 }
 
-// ===== 4. Redraw the cart and save it =====
+// ===== 6. Redraw the cart and save it =====
 function renderCart() {
   countEl.textContent = cart.length;
   itemsEl.innerHTML = "";
@@ -38,42 +76,38 @@ function renderCart() {
 
   cart.forEach(function (item, index) {
     const li = document.createElement("li");
-    li.innerHTML =
-      "<span>" +
-      item.name +
-      "</span>" +
-      "<span>" +
-      item.price.toLocaleString() +
-      " EGP</span>" +
-      '<button class="remove-btn" data-index="' +
-      index +
-      '">✕</button>';
+    li.innerHTML = `
+      <span>${item.name}</span>
+      <span>${item.price.toLocaleString()} EGP</span>
+      <button class="remove-btn" data-index="${index}">✕</button>
+    `;
     itemsEl.appendChild(li);
   });
 
   totalEl.textContent = getTotal().toLocaleString();
-
-  // Save the cart in the browser so it survives a refresh
   localStorage.setItem("nova-cart", JSON.stringify(cart));
 }
 
-// ===== 5. "Add to cart" buttons =====
-buttons.forEach(function (button) {
-  button.addEventListener("click", function () {
-    cart.push({
-      name: button.dataset.name,
-      price: Number(button.dataset.price),
-    });
-    renderCart();
+// ===== 7. "Add to cart" (one listener for ALL cards) =====
+productsEl.addEventListener("click", function (event) {
+  if (!event.target.classList.contains("add-btn")) return;
 
-    button.textContent = "Added ✓";
-    setTimeout(function () {
-      button.textContent = "Add to cart";
-    }, 1000);
+  const button = event.target;
+  const id = Number(button.dataset.id);
+  const product = products.find(function (p) {
+    return p.id === id;
   });
+
+  cart.push({ id: product.id, name: product.name, price: product.price });
+  renderCart();
+
+  button.textContent = "Added ✓";
+  setTimeout(function () {
+    button.textContent = "Add to cart";
+  }, 1000);
 });
 
-// ===== 6. Open and close the panel =====
+// ===== 8. Open and close the panel =====
 openBtn.addEventListener("click", function (event) {
   event.preventDefault();
   panel.classList.add("open");
@@ -83,7 +117,7 @@ closeBtn.addEventListener("click", function () {
   panel.classList.remove("open");
 });
 
-// ===== 7. Remove an item =====
+// ===== 9. Remove an item =====
 itemsEl.addEventListener("click", function (event) {
   if (event.target.classList.contains("remove-btn")) {
     const index = Number(event.target.dataset.index);
@@ -92,9 +126,9 @@ itemsEl.addEventListener("click", function (event) {
   }
 });
 
-// ===== 8. Checkout: send the order to WhatsApp =====
+// ===== 10. Checkout: send the order to WhatsApp =====
 form.addEventListener("submit", function (event) {
-  event.preventDefault(); // stop the page from reloading
+  event.preventDefault();
 
   if (cart.length === 0) {
     alert("Your cart is empty. Add a product first!");
@@ -105,29 +139,25 @@ form.addEventListener("submit", function (event) {
   const phone = document.querySelector("#customer-phone").value;
   const address = document.querySelector("#customer-address").value;
 
-  // Build the order message, line by line
   let message = "New order from NOVA Wear 🛍️\n\n";
   message += "Name: " + name + "\n";
   message += "Phone: " + phone + "\n";
   message += "Address: " + address + "\n\n";
   message += "Items:\n";
   cart.forEach(function (item) {
-    message +=
-      "- " + item.name + " — " + item.price.toLocaleString() + " EGP\n";
+    message += "- " + item.name + " — " + item.price.toLocaleString() + " EGP\n";
   });
   message += "\nTotal: " + getTotal().toLocaleString() + " EGP";
 
-  // Open WhatsApp with the message ready
-  const url =
-    "https://wa.me/" + SHOP_PHONE + "?text=" + encodeURIComponent(message);
+  const url = "https://wa.me/" + SHOP_PHONE + "?text=" + encodeURIComponent(message);
   window.open(url, "_blank");
 
-  // Empty the cart after ordering
   cart = [];
   renderCart();
   form.reset();
   panel.classList.remove("open");
 });
 
-// ===== 9. Show the saved cart when the page loads =====
+// ===== 11. Start: draw everything when the page loads =====
+renderProducts("all");
 renderCart();

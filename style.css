@@ -214,3 +214,35 @@ footer {
   border: none;
   cursor: pointer;
 }
+
+/* ===== Category filters ===== */
+.filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 40px 20px 0;
+}
+
+.filter-btn {
+  padding: 10px 22px;
+  border: 1px solid var(--black);
+  background: transparent;
+  color: var(--black);
+  font: inherit;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  background: var(--black);
+  color: var(--white);
+}
+
+/* ===== Product description ===== */
+.desc {
+  color: #555;
+  font-size: 14px;
+  margin: 6px 0;
+}
